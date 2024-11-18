@@ -37,11 +37,24 @@ app.get("/janken", (req, res) => {
   if( num==1 ) cpu = 'グー';
   else if( num==2 ) cpu = 'チョキ';
   else cpu = 'パー';
-  // ここに勝敗の判定を入れる
-  // 今はダミーで人間の勝ちにしておく
-  let judgement = '勝ち';
-  win += 1;
+  
+  let judgement = "引き分け";
+  if (
+    (hand === "グー" && cpu === "チョキ") ||
+    (hand === "チョキ" && cpu === "パー") ||
+    (hand === "パー" && cpu === "グー")
+  ) {
+    judgement = "勝ち";
+    win += 1;
+  } else if (
+    (hand === "グー" && cpu === "パー") ||
+    (hand === "チョキ" && cpu === "グー") ||
+    (hand === "パー" && cpu === "チョキ")
+  ) {
+    judgement = "負け";
+  }
   total += 1;
+
   const display = {
     your: hand,
     cpu: cpu,
@@ -50,6 +63,28 @@ app.get("/janken", (req, res) => {
     total: total
   }
   res.render( 'janken', display );
+});
+
+app.get("/greet", (req, res) => {
+  const name = req.query.name;
+
+  if (!name) {
+    return res.send("名前を入力してください。");
+  }
+
+  res.send(`こんにちは、${name}さん！ようこそ！`);
+});
+
+app.get("/add", (req, res) => {
+  const num1 = Number(req.query.num1);
+  const num2 = Number(req.query.num2); 
+
+  if (isNaN(num1) || isNaN(num2)) {
+    return res.send("有効な数字を入力してください。");
+  }
+
+  const sum = num1 + num2;
+  res.send(`計算結果: ${num1} + ${num2} = ${sum}`);
 });
 
 app.listen(8080, () => console.log("Example app listening on port 8080!"));
